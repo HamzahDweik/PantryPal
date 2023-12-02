@@ -46,7 +46,7 @@
 
         <div class="main-column">
             <h3>Registration Form</h3>
-            <form id="registrationForm" class="formFormat" method="post" onsubmit="return ValidateForm()">
+            <form id="registrationForm" class="formFormat" method="post">
                 <label for="userName">User Name:</label>
                 <input type="text" id="userName" name="userName" required="True"><br>
 
@@ -103,8 +103,22 @@
                         return;
                     }
 
-                    this.reset();
-                    alert("Registration successful!");
+                    var formData = new FormData(this);
+
+                    for (var pair of formData.entries()) {
+                        console.log(pair[0]+ ', ' + pair[1]);
+                    }
+
+                    fetch('../register_customer.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        this.reset();
+                    })
+                    .catch(error => console.error('Error:', error));
                 });
             </script>
         </div>

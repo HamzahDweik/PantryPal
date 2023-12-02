@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><xmlProducts>
     <product name="Potato Chips">
         <price>1.75</price>
-        <quantity>0</quantity>
+        <quantity>7</quantity>
     </product>
     <product name="Pretzels">
         <price>1.50</price>
@@ -41,7 +41,7 @@
     </product>
     <product name="Carrot" categories="product all vegetables">
         <price>0.75</price>
-        <quantity>0</quantity>
+        <quantity>2</quantity>
     </product>
     <product name="Broccoli" categories="product all vegetables">
         <price>1.25</price>
@@ -53,7 +53,7 @@
     </product>
     <product name="Banana" categories="product all fruits">
         <price>0.50</price>
-        <quantity>3</quantity>
+        <quantity>2</quantity>
     </product>
     <product name="Cut Melon" categories="product all fruits preCutFruits newItems">
         <price>1.50</price>
