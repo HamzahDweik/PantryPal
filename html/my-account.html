@@ -38,30 +38,52 @@
     </nav>
 
     <div class="main-content">
-        <div class="side-column">
-            
-        </div>
-
+        <div class="side-column"></div>
         <div class="main-column">
-            
             <div class="login-container">
                 <h2>Login to Your Account</h2>
-                <form action="login_processor.php" method="post">
+                <form id="loginForm" method="post">
                     <div class="form-group">
                         <label for="username">Username:</label>
                         <input type="text" id="username" name="username" required>
                     </div>
                     <div class="form-group">
                         <label for="password">Password: </label>
-                        <input type="password" id="password" name="password" required>
+                        <input type="password" id="password1" name="password" required>
                     </div>
                     <button class="loginButton" type="submit">Login</button>
                 </form>
                 <p>Don't have an account? <a href="register.html">Register here</a>.</p>
             </div>
         </div>
-    
     </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+    
+            const userName = document.getElementById('username').value;
+            const password = document.getElementById('password1').value;
+            console.log(password)
+    
+            var formData = new FormData(this);
+
+
+            fetch('../login_processor.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === "Login successful") {
+                    document.querySelector('.main-column').innerHTML = '<h2>Welcome, ' + document.getElementById('username').value + '</h2><p>Your account details here...</p>';
+                } else {
+                    alert(data);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 
     <footer>
         <p>Hamzah Dweik - HAD190000, CS6314.001</p>
