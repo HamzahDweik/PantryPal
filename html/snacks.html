@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snacks - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html" class="active">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3>Snack Store</h3><br>
+            <label>Search Snack:</label>
+            <input type="text" id="snackSearch" placeholder="Enter snack name"><br><br>
+            <p id="errorMessage" style="color:rgb(223, 155, 155);"></p>
+        </div>
+    
+        <div class="main-column">
+            <div class="productDisplay searchable">Potato Chips,Pretzels,Popcorn,Trail Mix,Granola Bar</div>
+            <script src="../inventory.js"></script>
+            <script>
+                document.getElementById("snackSearch").addEventListener("input", function() {
+                    let inputSnackName = this.value;
+    
+                    if (/[\d]/.test(inputSnackName)) {
+                        document.getElementById("errorMessage").textContent = "Invalid input. Please enter a snack name without numbers.";
+                        return;
+                    } else {
+                        document.getElementById("errorMessage").textContent = "";
+                    }
+    
+                    let allProducts = document.querySelectorAll(".product");
+                    allProducts.forEach(product => product.style.display = "none");
+    
+                    let productsToShow = document.querySelectorAll(".product h4");
+                    productsToShow.forEach(product => {
+                        if(product.textContent.toLowerCase().includes(inputSnackName.toLowerCase())) {
+                            product.parentElement.style.display = "block";
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+
+</body>
+</html>
