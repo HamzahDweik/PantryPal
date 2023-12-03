@@ -1,6 +1,5 @@
 <?php
-
-session_start();
+header('Content-Type: application/json');
 
 $host = 'localhost';
 $username = 'root';
@@ -29,24 +28,20 @@ if ($username !== '' && $password !== '') {
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['Password'])) {
-
-                $_SESSION['CustomerID'] = $user['CustomerID'];
-                $_SESSION['UserName'] = $user['UserName'];
-
-                echo "Login successful";
+                echo json_encode(['status' => 'Login successful', 'customerID' => $user['CustomerID'], 'userName' => $username]);;
             } else {
-                echo "Invalid username or password";
+                echo json_encode(['status' => 'Invalid username or password']);
             }
         } else {
-            echo "Invalid username or password";
+            echo json_encode(['status' => 'Invalid username or password']);
         }
 
         $stmt->close();
     } else {
-        echo "Error preparing SQL statement: " . $conn->error;
+        echo json_encode(['status' => 'Error preparing SQL statement: ' . $conn->error]);
     }
 } else {
-    echo "Username and password are required";
+    echo json_encode(['status' => 'Username and password are required']);
 }
 
 $conn->close();
