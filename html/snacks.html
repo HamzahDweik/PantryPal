@@ -44,9 +44,13 @@
         </div>
     
         <div class="main-column">
-            <div class="productDisplay searchable">Potato Chips,Pretzels,Popcorn,Trail Mix,Granola Bar</div>
-            <script src="../inventory.js"></script>
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
             <script>
+
+                $(document).ready(function() {
+                    populateProducts('snacks');
+                });
                 document.getElementById("snackSearch").addEventListener("input", function() {
                     let inputSnackName = this.value;
     

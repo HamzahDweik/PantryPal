@@ -22,8 +22,8 @@ function processXML($filename) {
         $quantity = (int)$product->quantity;
         $categories = (string)$product['categories'];
         $categoriesArray = explode(' ', $categories);
-        $category = $categoriesArray[2] ?? null;
-        $subcategory = $categoriesArray[3] ?? null;
+        $category = $categoriesArray[0] ?? null;
+        $subcategory = $categoriesArray[1] ?? null;
         insertIntoDatabase($name, $category, $subcategory, $price, $quantity);
     }
 }
@@ -36,8 +36,8 @@ function processJSON($filename) {
         $price = $product["price"];
         $quantity = $product["quantity"];
         $categories = explode(' ', $product["categories"]);
-        $category = $categories[2] ?? null;
-        $subcategory = $categories[3] ?? null;
+        $category = $categories[0] ?? null;
+        $subcategory = $categories[1] ?? null;
         insertIntoDatabase($name, $category, $subcategory, $price, $quantity);
     }
 }

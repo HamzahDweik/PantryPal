@@ -55,9 +55,13 @@
         </div>
             
         <div class="main-column">
-            <div class="productDisplay categorical">Frozen Waffle,Frozen Pancake,Ice Cream,Frozen Yogurt,Frozen Chicken Meal,Frozen Vegetarian Meal,Pepperoni Pizza,Cheese Pizza,Frozen Chicken,Frozen Beef,Frozen Mozzarella Sticks,Frozen Onion Rings</div>
-            <script src="../inventory.js"></script>
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
             <script>
+
+                $(document).ready(function() {
+                    populateProducts('frozen');
+                });
                 document.getElementById("frozenCategorySelect").addEventListener("change", function() {
                     let selectedCategory = this.value;
                     let allProducts = document.querySelectorAll(".product");

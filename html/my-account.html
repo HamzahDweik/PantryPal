@@ -91,7 +91,7 @@
 
                     document.getElementById('loginContainer').style.display = 'none';
                     
-                    if (data.customerID === "1") {
+                    if (data.customerID == "1") {
                         document.getElementById('adminUser').style.display = 'block';
                     } else {
                         document.getElementById('normalUser').style.display = 'block';
@@ -124,7 +124,7 @@
         window.onload = function() {
             if (sessionStorage.getItem('sessionActive')) {
                 document.getElementById('loginContainer').style.display = 'none';
-                if(sessionStorage.getItem('CustomerID') === "1") {
+                if(sessionStorage.getItem('CustomerID') == "1") {
                     document.getElementById('adminUser').style.display = 'block';
                 } else {
                     document.getElementById('normalUser').style.display = 'block';

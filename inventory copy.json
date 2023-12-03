@@ -1,0 +1,172 @@
+{
+    "products": [
+        {
+            "name": "Canned Soup",
+            "price": 2,
+            "quantity": 2,
+            "categories": "pantry cannedGoods"
+        },
+        {
+            "name": "Canned Tuna",
+            "price": 3.5,
+            "quantity": 3,
+            "categories": "pantry cannedGoods"
+        },
+        {
+            "name": "Canned Corn",
+            "price": 1.5,
+            "quantity": 2,
+            "categories": "pantry cannedVegetable"
+        },
+        {
+            "name": "Canned Beans",
+            "price": 2,
+            "quantity": 3,
+            "categories": "pantry cannedVegetable"
+        },
+        {
+            "name": "Ketchup",
+            "price": 3,
+            "quantity": 2,
+            "categories": "pantry rollbacks"
+        },
+        {
+            "name": "Mustard",
+            "price": 2.5,
+            "quantity": 1,
+            "categories": "pantry condiments"
+        },
+        {
+            "name": "Peanut Butter",
+            "price": 4,
+            "quantity": 3,
+            "categories": "pantry peanutButterSpread"
+        },
+        {
+            "name": "Jam",
+            "price": 3.5,
+            "quantity": 3,
+            "categories": "pantry peanutButterSpread"
+        },
+        {
+            "name": "Spaghetti",
+            "price": 2,
+            "quantity": 3,
+            "categories": "pantry pastaPizza"
+        },
+        {
+            "name": "Pizza Sauce",
+            "price": 3,
+            "quantity": 3,
+            "categories": "pantry pastaPizza"
+        },
+        {
+            "name": "Apple Pie Filling",
+            "price": 3,
+            "quantity": 10,
+            "categories": "baking pieFilling"
+        },
+        {
+            "name": "Cherry Pie Filling",
+            "price": 3.5,
+            "quantity": 10,
+            "categories": "baking pieFilling"
+        },
+        {
+            "name": "Classic Pie Crust",
+            "price": 2.5,
+            "quantity": 10,
+            "categories": "baking pieCrust"
+        },
+        {
+            "name": "Graham Cracker Crust",
+            "price": 2.75,
+            "quantity": 10,
+            "categories": "baking pieCrust"
+        },
+        {
+            "name": "Vanilla Pudding Mix",
+            "price": 1.5,
+            "quantity": 10,
+            "categories": "baking puddingMix"
+        },
+        {
+            "name": "Chocolate Pudding Mix",
+            "price": 1.5,
+            "quantity": 10,
+            "categories": "baking puddingMix"
+        },
+        {
+            "name": "Aluminum Pie Pan",
+            "price": 4,
+            "quantity": 10,
+            "categories": "baking piePans"
+        },
+        {
+            "name": "Glass Pie Pan",
+            "price": 6,
+            "quantity": 10,
+            "categories": "baking piePans"
+        },
+        {
+            "name": "Reeces Puffs",
+            "price": 5,
+            "quantity": 3,
+            "categories": "breakfast cerealShop"
+        },
+        {
+            "name": "Cinnamon Toast Crunch",
+            "price": 6,
+            "quantity": 3,
+            "categories": "breakfast cerealShop"
+        },
+        {
+            "name": "Pancakes",
+            "price": 4.5,
+            "quantity": 3,
+            "categories": "breakfast rollbacks"
+        },
+        {
+            "name": "Waffles",
+            "price": 5.5,
+            "quantity": 3,
+            "categories": "breakfast pancakesWaffles"
+        },
+        {
+            "name": "Toast Bread",
+            "price": 2.5,
+            "quantity": 3,
+            "categories": "breakfast breakfastBreads"
+        },
+        {
+            "name": "Bagels",
+            "price": 3.5,
+            "quantity": 3,
+            "categories": "breakfast rollbacks"
+        },
+        {
+            "name": "English Muffin",
+            "price": 4,
+            "quantity": 3,
+            "categories": "breakfast breakfastBreads"
+        },
+        {
+            "name": "Danish Pastry",
+            "price": 6,
+            "quantity": 3,
+            "categories": "breakfast breakfastBreads"
+        },
+        {
+            "name": "Oatmeal",
+            "price": 2,
+            "quantity": 3,
+            "categories": "breakfast oatmealGrits"
+        },
+        {
+            "name": "Grits",
+            "price": 2.5,
+            "quantity": 3,
+            "categories": "breakfast oatmealGrits"
+        }
+    ]
+}
