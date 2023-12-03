@@ -1,6 +1,7 @@
 
 if(document.getElementById("cartTable")) {
     displayCart();
+    console.log("called")
     document.getElementById('cancelOrderButton').addEventListener('click', cancelOrder);
     document.getElementById('placeOrderButton').addEventListener('click', placeOrder);
 }
@@ -22,7 +23,6 @@ function updateInventoryOnServer(updatedInventory, isXml = true) {
 
 function populateProducts(category) {
     var div = $('.productDisplay');
-    var searchableDiv = $('.searchable');
 
     $.ajax({
         url: '../get_products.php',
@@ -32,7 +32,6 @@ function populateProducts(category) {
         success: function(products) {
             products.forEach(function(product) {
                 var productElement;
-                console.log(product)
                 if (product.Subcategory && product.Subcategory.trim() !== '') {
                     productElement = createCategoricalProductStanza(product.Name, parseFloat(product.UnitPrice), product.QuantityInInventory, product.Subcategory);
                     div.append(productElement);
@@ -145,8 +144,7 @@ function updateCartInDatabase(customerId, productName, quantity, price) {
             alert("Error updating cart: " + data.error);
         } else {
             console.log('Success:', data.message);
-            alert(data.message);
-            // Here, you can also update the UI to reflect the changes
+            updateDisplayedQuantity(productName, quantity);
         }
     })
     .catch((error) => {
@@ -155,48 +153,108 @@ function updateCartInDatabase(customerId, productName, quantity, price) {
     });
 }
 
+function updateDisplayedQuantity(productName, quantity) {
+    var nameWithoutSpaces = productName.replace(/\s+/g, '');
+    var quantityElementId = "quant" + nameWithoutSpaces;
+    
+    var quantityElement = document.getElementById(quantityElementId);
+    if (quantityElement) {
+        var currentQuantity = parseInt(quantityElement.textContent);
+        if (isNaN(currentQuantity)) {
+            console.error('Current quantity is not a number');
+            return;
+        }
 
-function calculateTotal() {
+        var newQuantity = currentQuantity - quantity;
+        quantityElement.textContent = newQuantity.toString();
+    } else {
+        console.error('Element with ID ' + quantityElementId + ' not found');
+    }
+}
+
+
+
+function calculateTotal(cartItems) {
     var total = 0;
-    
-    var productNodes = cartXmlDoc.querySelectorAll('product');
-    
-    productNodes.forEach(function(productNode) {
-        var productTotalPrice = Number(productNode.querySelector('totalPrice').textContent);
-        total += productTotalPrice;
+
+    cartItems.forEach(function(item) {
+        // Ensure item.price is a number
+        var price = parseFloat(item.price);
+        if (isNaN(price)) {
+            console.error('Invalid price for item:', item);
+            price = 0; // Set to 0 if invalid
+        }
+        var itemTotalPrice = item.quantity * price;
+        total += itemTotalPrice;
     });
-    
+
     return total.toFixed(2);
 }
 
 
+
+
 function displayCart() {
+    var customerId = sessionStorage.getItem('CustomerID');
+
+    fetch('../display_cart.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customerId: customerId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+        } else {
+            updateCartTable(data.cartItems);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function updateCartTable(cartItems) {
     var tableBody = document.querySelector("#cartTable tbody");
+    tableBody.innerHTML = ''; // Clear existing rows
 
-    var productNodes = cartXmlDoc.querySelectorAll('product');
+    cartItems.forEach(item => {
+        var price = parseFloat(item.price);
+        if (isNaN(price)) {
+            console.error('Invalid price for item:', item);
+            price = 0; // Set to 0 if invalid
+        }
 
-    productNodes.forEach(function(productNode) {
-        var itemName = productNode.getAttribute('name');
-        var itemQuantity = Number(productNode.querySelector('quantity').textContent);
-        var itemTotalPrice = Number(productNode.querySelector('totalPrice').textContent);
-        var itemPrice = itemTotalPrice / itemQuantity;
         var row = document.createElement("tr");
         var itemNameCell = document.createElement("td");
-        itemNameCell.textContent = itemName;
+        itemNameCell.textContent = item.name;
         var quantityCell = document.createElement("td");
-        quantityCell.textContent = itemQuantity;
+        quantityCell.textContent = item.quantity;
         var priceCell = document.createElement("td");
-        priceCell.textContent = `$${itemPrice.toFixed(2)}`;
+        priceCell.textContent = `$${price.toFixed(2)}`;
         var totalPriceCell = document.createElement("td");
-        totalPriceCell.textContent = `$${itemTotalPrice.toFixed(2)}`;
+        totalPriceCell.textContent = `$${(price * item.quantity).toFixed(2)}`;
         row.appendChild(itemNameCell);
         row.appendChild(quantityCell);
         row.appendChild(priceCell);
         row.appendChild(totalPriceCell);
         tableBody.appendChild(row);
     });
-    appendTotal(tableBody);
+
+
+    var finalRow = document.createElement("tr");
+    finalRow.appendChild(document.createElement("td"));
+    finalRow.appendChild(document.createElement("td"));
+    finalRow.appendChild(document.createElement("td"));
+    var totalCell = document.createElement("td");
+    totalCell.textContent = `$${calculateTotal(cartItems)}`;
+    finalRow.appendChild(totalCell);
+    tableBody.appendChild(finalRow);
 }
+
 
 function clearCartDisplay() {
     var tableBody = document.querySelector("#cartTable tbody");
@@ -204,17 +262,6 @@ function clearCartDisplay() {
         tableBody.innerHTML = '';
     }
     appendTotal(tableBody);
-}
-
-function appendTotal(body){
-    var finalRow = document.createElement("tr");
-    finalRow.appendChild(document.createElement("td"));
-    finalRow.appendChild(document.createElement("td"));
-    finalRow.appendChild(document.createElement("td"));
-    var totalCell = document.createElement("td");
-    totalCell.textContent = `$${calculateTotal()}`;
-    finalRow.appendChild(totalCell);
-    body.appendChild(finalRow);
 }
 
 
