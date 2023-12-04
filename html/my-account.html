@@ -59,10 +59,10 @@
             <div id="normalUser" style="display: none;">
                 <h2>Welcome, <span id="userNameDisplay"></span></h2>
                 <p>Your account details here...</p>
-                <button onclick="fetchData('currentMonth')">Current Month</button>
-                <button onclick="fetchData('last3Months')">Last 3 Months</button>
-                <button onclick="fetchData('currentYear')">Current Year</button>
-            
+                <button onclick="fetchTransactions('current month')">Current Month</button>
+                <button onclick="fetchTransactions('last 3 months')">Last 3 Months</button>
+                <button onclick="fetchTransactions('last year')">Last Year</button>
+
                 <div id="transactionsOutput"></div>
             </div>
 
@@ -141,6 +141,19 @@
             .catch(error => console.error('Error:', error));
         });
 
+        function fetchTransactions(period) {
+        // Get the customer ID from sessionStorage
+            const customerID = sessionStorage.getItem('CustomerID');
+
+            // Fetch transactions based on the selected time period
+            fetch(`../get_transactions_by_period.php?CustomerID=${customerID}&period=${period}`)
+                .then(response => response.text())
+                .then(transactionsData => {
+                    document.getElementById('transactionsOutput').innerHTML = transactionsData;
+                })
+                .catch(error => console.error('Error fetching transactions:', error));
+        }
+
         function fetchData() {
             const date = document.getElementById('date').value;
 
@@ -159,31 +172,6 @@
                 document.getElementById('transactionsOutput').innerHTML = '<h3>Customers with More Than Two Transactions on ' + date + '</h3>' + transactionsData;
             })
             .catch(error => console.error('Error fetching transactions:', error));
-        }
-
-        // Add this function to handle button clicks and fetch transactions
-        function fetchData(timePeriod) {
-            let date;
-
-            if (timePeriod === 'currentMonth') {
-                const now = new Date();
-                const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
-                date = now.getFullYear() + '-' + (currentMonth < 10 ? '0' : '') + currentMonth;
-            } else if (timePeriod === 'last3Months') {
-                const now = new Date();
-                const last3Months = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-                date = last3Months.getFullYear() + '-' + ((last3Months.getMonth() + 1) < 10 ? '0' : '') + (last3Months.getMonth() + 1);
-            } else if (timePeriod === 'currentYear') {
-                const now = new Date();
-                date = now.getFullYear().toString();
-            }
-            // Fetch customer transactions
-            fetch('../get_transactions.php?date=' + date)
-                .then(response => response.text())
-                .then(transactionsData => {
-                    document.getElementById('transactionsOutput').innerHTML = '<h3>Transactions</h3>' + transactionsData;
-                })
-                .catch(error => console.error('Error fetching transactions:', error));
         }
 
         window.onload = function() {
