@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Contact Us - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html" class="active">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3>Contact Methods</h3><br>
+            <p>Currently we are only accepting email as our only contact method. You may leave your name and email here and we will get back to you as soon as possible!</p>
+        </div>
+
+        <div class="main-column">
+            <h3>Contact Form</h3>
+            <form id="contactForm" class="formFormat" method="post">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName"><br>
+                
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName"><br>
+                
+                <label for="phoneNum">Phone Number:</label>
+                <input type="text" id="phoneNum" name="phoneNum"><br><br>
+                
+                <label>Gender:</label>
+                <input type="radio" id="male" name="gender" value="male"> Male
+                <input type="radio" id="female" name="gender" value="female"> Female<br><br>
+
+                <label for="userEmail">Email:</label>
+                <input type="text" id="userEmail" name="email"><br><br>
+
+                <label for="comment">Comment:</label>
+                <textarea id="comment" name="comment" cols="60" rows="15"></textarea><br><br>
+                
+                <input type="submit" value="Submit">
+                <div id="message"></div>
+            </form>
+            <script>
+                document.getElementById('contactForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+            
+                    const firstName = document.getElementById('firstName').value;
+                    const lastName = document.getElementById('lastName').value;
+                    const phone = document.getElementById('phoneNum').value;
+                    const email = document.getElementById('userEmail').value;
+                    const comment = document.getElementById('comment').value;
+                    const male = document.getElementById('male').checked;
+                    const female = document.getElementById('female').checked;
+            
+                    if (!/^[A-Z][a-zA-Z]*$/.test(firstName) || !/^[A-Z][a-zA-Z]*$/.test(lastName)) {
+                        alert("First and last names must be alphabetic and start with a capital letter.");
+                        return;
+                    }
+            
+                    if (firstName === lastName) {
+                        alert("First name and last name cannot be the same.");
+                        return;
+                    }
+            
+                    if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(phone)) {
+                        alert("Phone number must be in the format (ddd) ddd-dddd.");
+                        return;
+                    }
+            
+                    if (!email.includes('@') || !email.includes('.')) {
+                        alert("Email address must contain @ and .");
+                        return;
+                    }
+            
+                    if (!male && !female) {
+                        alert("Please select a gender.");
+                        return;
+                    }
+            
+                    if (comment.length < 10) {
+                        alert("Comment must be at least 10 characters long.");
+                        return;
+                    }
+                    
+                    document.getElementById('message').innerText = 'Input was successfully submitted!';
+                });
+            </script>
+            
+        </div>
+    </div>
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+
+</body>
+</html>

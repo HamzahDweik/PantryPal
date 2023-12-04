@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>About Us - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html" class="active">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3 id="our-team">Our Team</h3><br>
+            <ul>
+                <li>Hamzah Dweik - CEO</li>
+                <li>Hamzah Dweik - CTO</li>
+                <li>Hamzah Dweik - COO</li>
+                <li>and you guessed it... Hamzah Dweik as CFO!</li>
+            </ul>
+        </div>
+        <div class="main-column">
+            <h3 id="our-history">Our History</h3><br>
+            <p>We began our journey with the aim of simplifying grocery shopping.</p><br>
+            <img src="../images/team.jpg" alt="About Us Image"><br><br>
+
+            <dl>
+                <dt>Hamzah Dweik (left)</dt>
+                <dd>Chief Executive Officer</dd><br>
+                <dt>Hamzah Dweik (left middle)</dt>
+                <dd>Chief Technology Officer</dd><br>
+                <dt>Hamzah Dweik (right middle)</dt>
+                <dd>Chief Operations Officer</dd><br>
+                <dt>Hamzah Dweik (right)</dt>
+                <dd>Chief Financial Officer</dd><br>
+            </dl>
+        </div>
+    </div>
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+</body>
+</html>

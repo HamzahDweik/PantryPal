@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Account - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html" class="active">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column"></div>
+        <div class="main-column">
+            <div class="login-container" id="loginContainer">
+                <h2>Login to Your Account</h2>
+                <form id="loginForm" method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password: </label>
+                        <input type="password" id="password1" name="password" required>
+                    </div>
+                    <button class="loginButton" type="submit">Login</button>
+                </form>
+                <p>Don't have an account? <a href="register.html">Register here</a>.</p>
+            </div>
+
+            <div id="normalUser" style="display: none;">
+                <h2>Welcome, <span id="userNameDisplay"></span></h2>
+                <p>Your account details here...</p>
+                <button onclick="fetchData('currentMonth')">Current Month</button>
+                <button onclick="fetchData('last3Months')">Last 3 Months</button>
+                <button onclick="fetchData('currentYear')">Current Year</button>
+            
+                <div id="transactionsOutput"></div>
+            </div>
+
+            <div id="adminUser" style="display: none;">
+                <form id="fileUpload" method="post">
+                    Select file to upload:
+                    <input type="file" name="fileToUpload" id="fileToUpload">
+                    <input type="submit" value="Upload File" name="submit">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+    
+            var formData = new FormData(this);
+
+            fetch('../login_processor.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.status)
+                if (data.status === "Login successful") {
+                    sessionStorage.setItem('sessionActive', true);
+                    sessionStorage.setItem('CustomerID', data.customerID);
+                    sessionStorage.setItem('UserName', data.userName);
+                    document.getElementById('loginContainer').style.display = 'none';
+                    
+                    if (data.customerID == "1") {
+                        document.getElementById('adminUser').style.display = 'block';
+                        fetch('../get_inventory.php')
+                            .then(response => response.text())
+                            .then(inventoryData => {
+                            document.querySelector('.main-column').innerHTML = '<h2>Welcome, ' + data.userName + '</h2><p>Your account details here...</p><h3>Inventory Table</h3>' + inventoryData
+                            + `<form id="dateForm">
+                                    <label for="date">Enter Date:</label>
+                                    <input type="date" id="date" name="date" required>
+                                    <button type="button" onclick="fetchData()">Get Data</button>
+                                </form>
+                            <div id="transactionsOutput"></div>`})
+                    } else {
+                        document.getElementById('normalUser').style.display = 'block';
+                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.userName;
+                        fetch('../get_last_transaction.php?CustomerID=' + data.customerID)
+                            .then(response => response.text())
+                            .then(lastTransactionData => {
+                                // Display the last transaction details
+                                document.getElementById('normalUser').innerHTML += '<h3>Last Transaction</h3>' + lastTransactionData;
+                            })
+                            .catch(error => console.error('Error fetching last transaction data:', error));
+                    }
+                } else {
+                    alert("Login failed: " + data.status);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('fileUpload').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('../file_upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function fetchData() {
+            const date = document.getElementById('date').value;
+
+            // Fetch inventory
+            fetch('../get_inventory.php')
+            .then(response => response.text())
+            .then(inventoryData => {
+                document.getElementById('inventoryOutput').innerHTML = '<h3>Inventory</h3>' + inventoryData;
+            })
+            .catch(error => console.error('Error fetching inventory data:', error));
+
+            // Fetch customer transactions
+            fetch('../get_transactions.php?date=' + date)
+            .then(response => response.text())
+            .then(transactionsData => {
+                document.getElementById('transactionsOutput').innerHTML = '<h3>Customers with More Than Two Transactions on ' + date + '</h3>' + transactionsData;
+            })
+            .catch(error => console.error('Error fetching transactions:', error));
+        }
+
+        // Add this function to handle button clicks and fetch transactions
+        function fetchData(timePeriod) {
+            let date;
+
+            if (timePeriod === 'currentMonth') {
+                const now = new Date();
+                const currentMonth = now.getMonth() + 1; // JavaScript months are 0-based
+                date = now.getFullYear() + '-' + (currentMonth < 10 ? '0' : '') + currentMonth;
+            } else if (timePeriod === 'last3Months') {
+                const now = new Date();
+                const last3Months = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+                date = last3Months.getFullYear() + '-' + ((last3Months.getMonth() + 1) < 10 ? '0' : '') + (last3Months.getMonth() + 1);
+            } else if (timePeriod === 'currentYear') {
+                const now = new Date();
+                date = now.getFullYear().toString();
+            }
+            // Fetch customer transactions
+            fetch('../get_transactions.php?date=' + date)
+                .then(response => response.text())
+                .then(transactionsData => {
+                    document.getElementById('transactionsOutput').innerHTML = '<h3>Transactions</h3>' + transactionsData;
+                })
+                .catch(error => console.error('Error fetching transactions:', error));
+        }
+
+        window.onload = function() {
+            if (sessionStorage.getItem('sessionActive')) {
+                document.getElementById('loginContainer').style.display = 'none';
+                if(sessionStorage.getItem('CustomerID') == "1") {
+                    document.getElementById('adminUser').style.display = 'block';
+                } else {
+                    document.getElementById('normalUser').style.display = 'block';
+                    document.getElementById('userNameDisplay').textContent = sessionStorage.getItem('UserName');
+                }
+            } else {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('userInfoContainer').style.display = 'none';
+            }
+        };
+    </script>
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+
+</body

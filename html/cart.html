@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html" class="active">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3>This is your current cart!</h3>
+        </div>
+
+        <div class="main-column">
+            <table id="cartTable">
+                <thead>
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <div style="display: flex;justify-content: space-between;align-items: center;padding: 10px;">
+                <button id="cancelOrderButton" style="background-color: #f2d5cf;color: #5c4f4b;border: none;border-radius: 10px;padding: 10px 20px;font-size: 16px;font-family: 'Arial', sans-serif;">Cancel Order</button>
+                <button id="placeOrderButton" style="background-color: #a8dadc;color: #1d3557;border: none;border-radius: 10px;padding: 10px 20px;font-size: 16px;font-family: 'Arial', sans-serif;">Place Order</button>
+            </div>
+        </div>
+    </div>
+    <script src="../inventory copy.js"></script>
+
+    <footer>
+        <p>Copyright 2023, Hamzah Dweik. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

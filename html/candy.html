@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Candy - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html" class="active">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3>Candy Store</h3><br>
+            <label>Search Candy:</label>
+            <input type="text" id="candySearch" placeholder="Enter candy name"><br><br>
+            <p id="errorMessage" style="color:rgb(223, 155, 155);"></p>
+        </div>
+    
+        <div class="main-column">
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
+            <script>
+
+                $(document).ready(function() {
+                    populateProducts('candy');
+                });
+                document.getElementById("candySearch").addEventListener("input", function() {
+                    let inputCandyName = this.value;
+
+                    if (/[\d]/.test(inputCandyName)) {
+                        document.getElementById("errorMessage").textContent = "Invalid input. Please enter a candy name without numbers.";
+                        return;
+                    } else {
+                        document.getElementById("errorMessage").textContent = "";
+                    }
+
+                    let allProducts = document.querySelectorAll(".product");
+                    allProducts.forEach(product => product.style.display = "none");
+
+                    let productsToShow = document.querySelectorAll(".product h4");
+                    productsToShow.forEach(product => {
+                        if(product.textContent.toLowerCase().includes(inputCandyName.toLowerCase())) {
+                            product.parentElement.style.display = "block";
+                        }
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+
+</body>
+</html>

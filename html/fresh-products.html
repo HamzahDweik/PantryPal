@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fresh Products - PantryPal</title>
+    <link rel="stylesheet" type="text/css" href="../mystyle.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>PantryPal</h1>
+        <div id="currentDateTime"></div>
+        <script>
+            function updateDateTime() {
+                const now = new Date();
+                const dateTimeString = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                document.getElementById('currentDateTime').textContent = dateTimeString;
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+        </script>
+    </header>
+
+    <nav>
+        <a href="fresh-products.html" class="active">Fresh Products</a>
+        <a href="frozen.html">Frozen</a>
+        <a href="pantry.html">Pantry</a>
+        <a href="breakfast-cereal.html">Breakfast and Cereal</a>
+        <a href="baking.html">Baking</a>
+        <a href="snacks.html">Snacks</a>
+        <a href="candy.html">Candy</a>
+        <a href="specialty-shops.html">Specialty Shops</a>
+        <a href="deals.html">Deals</a>
+        <a href="my-account.html">My Account</a>
+        <a href="about-us.html">About Us</a>
+        <a href="contact-us.html">Contact Us</a>
+        <a href="cart.html">Cart</a>
+    </nav>
+
+    <div class="main-content">
+        <div class="side-column">
+            <h3>Fresh Produce</h3><br>
+            <label>Shop by Category:</label>
+            <select class="categorySelect" id="freshProduceCategorySelect">
+                <option value="all">Shop All</option>
+                <option value="vegetables">All Vegetables</option>
+                <option value="fruits">All Fruits</option>
+                <option value="preCutFruits">Pre-Cut Fruits</option>
+                <option value="flowers">Flowers</option>
+                <option value="salsaDips">Salsa and Dips</option>
+                <option value="seasonProduce">Season Produce</option>
+                <option value="newItems">New Items</option>
+                <option value="rollbacks">Rollbacks</option>
+            </select>
+            <div id="productDisplay"></div>
+        </div>
+
+        <div class="main-column">
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
+            <script>
+
+                $(document).ready(function() {
+                    populateProducts('freshProducts');
+                });
+                document.getElementById("freshProduceCategorySelect").addEventListener("change", function() {
+                    let selectedCategory = this.value;
+                    let allProducts = document.querySelectorAll(".product");
+                    
+                    allProducts.forEach(product => product.style.display = "none");
+
+                    let productsToShow = document.querySelectorAll(".product." + selectedCategory);
+                    productsToShow.forEach(product => product.style.display = "block");
+                });
+            </script>
+        </div>
+    </div>
+
+    <footer>
+        <p>Hamzah Dweik - HAD190000, CS6314.001</p>
+    </footer>
+
+</body>
+</html>
