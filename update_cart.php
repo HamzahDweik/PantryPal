@@ -23,6 +23,7 @@ $price = $input['price'];
 $cartStatus = 'Pending';
 $transactionStatus = 'In Cart';
 $newTotalPrice = $quantity * $price;
+date_default_timezone_set('America/Chicago');
 $transactionDate = date('Y-m-d');
 
 $conn->begin_transaction();

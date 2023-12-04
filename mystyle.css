@@ -458,3 +458,143 @@ input[type="number"]::placeholder {
     margin-bottom: 5px;
 }
 
+#adminUser {
+    background-color: #CFD8DC;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    color: #000000;
+}
+
+#adminUser h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#adminUser form {
+    margin-bottom: 20px;
+}
+
+#adminUser input[type="text"],
+#adminUser input[type="number"],
+#adminUser input[type="date"],
+#adminUser input[type="month"] {
+    padding: 8px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+#adminUser input[type="submit"],
+#adminUser button {
+    background-color: #78909C;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#adminUser input[type="submit"]:hover,
+#adminUser button:hover {
+    background-color: #78909C;
+}
+
+#adminUser div {
+    margin-bottom: 20px;
+}
+
+#adminUser table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#adminUser table, 
+#adminUser th, 
+#adminUser td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#adminUser th {
+    background-color: #78909C;
+    color: white;
+}
+
+#adminUser table,
+#adminUser th,
+#adminUser td {
+    border: 1px solid #000000;
+}
+
+#adminUser th {
+    background-color: #78909C;
+    color: white;
+}
+
+#normalUser {
+    background-color: #B0BEC5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    color: #000000;
+}
+
+#normalUser h3 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#normalUser form {
+    margin-bottom: 20px;
+}
+
+#normalUser input[type="text"],
+#normalUser input[type="number"],
+#normalUser input[type="date"],
+#normalUser input[type="month"] {
+    padding: 8px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+#normalUser input[type="submit"],
+#normalUser button {
+    background-color: #78909C;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#normalUser input[type="submit"]:hover,
+#normalUser button:hover {
+    background-color: #78909C;
+}
+
+#normalUser div {
+    margin-bottom: 20px;
+}
+
+#normalUser table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#normalUser table,
+#normalUser th,
+#normalUser td {
+    border: 1px solid #000000;
+}
+
+#normalUser th {
+    background-color: #78909C;
+    color: white;
+}

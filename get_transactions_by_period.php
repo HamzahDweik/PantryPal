@@ -1,85 +1,67 @@
 <?php
-// get_transactions_by_period.php
 
-// Database connection
+header('Content-Type: application/json');
+
 $host = 'localhost';
 $username = 'root';
-$dbPassword = '';
+$password = '';
 $database = 'PantryPal';
 
-// Create a new MySQLi connection
-$conn = new mysqli($host, $username, $dbPassword, $database);
+$conn = new mysqli($host, $username, $password, $database);
 
-// Check if the connection was successful
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo json_encode(['error' => "Connection failed: " . $conn->connect_error]);
+    exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $customerID = $_GET['CustomerID'];
-    $period = $_GET['period'];
+$inputJSON = file_get_contents('php://input');
+$input = json_decode($inputJSON, TRUE);
+$timeFrame = $input['timeFrame'];
+$customerId = $input['customerID'];
+$specifiedYear = isset($input['year']) ? $input['year'] : null;
 
-    // SQL query to retrieve transactions based on the selected time period
-    $sql = '';
-    $stmt = null;
 
-    // Current date values
-    $currentMonth = date('m');
-    $currentYear = date('Y');
-
-    // Adjust the SQL query based on the selected time period
-    switch ($period) {
-        case 'current month':
-            $sql = "SELECT T.*
-                    FROM Transactions T
+switch ($timeFrame) {
+    case 'currentMonth':
+        $query = "SELECT T.* FROM Transactions T
+                  JOIN Carts C ON T.TransactionID = C.TransactionID
+                  WHERE C.CustomerID = ? AND MONTH(T.TransactionDate) = MONTH(CURRENT_DATE()) AND YEAR(T.TransactionDate) = YEAR(CURRENT_DATE())";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $customerId);
+        break;
+    case 'last3Months':
+        $query = "SELECT T.* FROM Transactions T
                     JOIN Carts C ON T.TransactionID = C.TransactionID
-                    WHERE C.CustomerID = ?
-                    AND MONTH(T.TransactionDate) = ?
-                    AND YEAR(T.TransactionDate) = ?;";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("iii", $customerID, $currentMonth, $currentYear);
-            break;
-        case 'last 3 months':
-            $sql = "SELECT T.*
-                    FROM Transactions T
+                    WHERE C.CustomerID = ? AND T.TransactionDate >= DATE_SUB(CURRENT_DATE(), INTERVAL 3 MONTH)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("i", $customerId);
+        break;
+    case 'year':
+        $query = "SELECT T.* FROM Transactions T
                     JOIN Carts C ON T.TransactionID = C.TransactionID
-                    WHERE C.CustomerID = ?
-                    AND T.TransactionDate >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH);";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("i", $customerID);
-            break;
-        case 'last year':
-            $lastYear = $currentYear - 1;
-            $sql = "SELECT T.*
-                    FROM Transactions T
-                    JOIN Carts C ON T.TransactionID = C.TransactionID
-                    WHERE C.CustomerID = ?
-                    AND YEAR(T.TransactionDate) = ?;";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ii", $customerID, $lastYear);
-            break;
-        default:
-            echo '<p>Invalid time period specified.</p>';
-            break;
-    }
-
-    // Execute the SQL query if prepared statement is set
-    if ($stmt && $stmt->execute()) {
-        $result = $stmt->get_result();
-        echo "<ul>";
-        while ($row = $result->fetch_assoc()) {
-            echo "<li>TransactionID: " . $row['TransactionID'] . ", TransactionDate: " . $row['TransactionDate'] . ", TotalPrice: " . $row['TotalPrice'] . "</li>";
-        }
-        echo "</ul>";
-        $stmt->close();
-    } else {
-        echo '<p>Error fetching transactions: ' . ($stmt ? $stmt->error : 'Invalid statement') . '</p>';
-    }
-
-} else {
-    echo '<p>Invalid request method.</p>';
+                    WHERE C.CustomerID = ? AND YEAR(T.TransactionDate) = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $customerId, $specifiedYear);
+        break;
+    default:
+        echo json_encode(['error' => 'Invalid time frame specified']);
+        exit;
 }
 
-// Close the database connection
+if (!$stmt->execute()) {
+    echo json_encode(['error' => $stmt->error]);
+    exit;
+}
+
+$result = $stmt->get_result();
+
+$transactions = [];
+while ($row = $result->fetch_assoc()) {
+    $transactions[] = $row;
+}
+
+echo json_encode(['transactions' => $transactions]);
+
+$stmt->close();
 $conn->close();
 ?>

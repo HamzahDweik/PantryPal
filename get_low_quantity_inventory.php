@@ -14,11 +14,11 @@ if ($conn->connect_error) {
     exit;
 }
 
-$query = "SELECT ItemNumber, Name, Category, Subcategory, UnitPrice, QuantityInInventory FROM Inventory";
+$query = "SELECT ItemNumber, Name, Category, Subcategory, UnitPrice, QuantityInInventory FROM Inventory WHERE QuantityInInventory < 3";
 $result = $conn->query($query);
 
 if (!$result) {
-    echo json_encode(['error' => "Error fetching inventory: " . $conn->error]);
+    echo json_encode(['error' => "Error fetching low quantity inventory: " . $conn->error]);
     exit;
 }
 

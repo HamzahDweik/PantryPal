@@ -55,27 +55,74 @@
                 </form>
                 <p>Don't have an account? <a href="register.html">Register here</a>.</p>
             </div>
-
-            <div id="normalUser" style="display: none;">
-                <h2>Welcome, <span id="userNameDisplay"></span></h2>
-                <p>Your account details here...</p>
-                <button onclick="fetchTransactions('current month')">Current Month</button>
-                <button onclick="fetchTransactions('last 3 months')">Last 3 Months</button>
-                <button onclick="fetchTransactions('last year')">Last Year</button>
-
-                <div id="transactionsOutput"></div>
-            </div>
+            
+            
 
             <div id="adminUser" style="display: none;">
                 <form id="fileUpload" method="post">
+                    <h3>Insert to Inventory (XML/JSON)</h3>
                     Select file to upload:
                     <input type="file" name="fileToUpload" id="fileToUpload">
                     <input type="submit" value="Upload File" name="submit">
                 </form>
+            
+                <form id="updateItemForm">
+                    <h3>Update Item Details</h3>
+                    Item Number: <input type="number" id="itemNumber" name="itemNumber" required><br>
+                    New Unit Price: <input type="text" id="unitPrice" name="unitPrice"><br>
+                    New Quantity: <input type="number" id="quantity" name="quantity"><br>
+                    <button type="button" onclick="updateItemDetails()">Update Item</button>
+                </form>
+
+                <h3>Inventory Table</h3>
+                <button type="button" onclick="showInventory('inventoryOutput', '../get_inventory.php')">Show Inventory</button>
+                <button type="button" onclick="hideInventory('inventoryOutput')">Hide Inventory</button>
+                <div id="inventoryOutput"></div><br><br><br>
+
+                <h3>Inventory with Quantity Less Than 3</h3>
+                <button type="button" onclick="showInventory('quantity3Output', '../get_low_quantity_inventory.php')">Show Low Quantity Inventory</button>
+                <button type="button" onclick="hideInventory('quantity3Output')">Hide Low Quantity Inventory</button>
+                <div id="quantity3Output"></div><br><br><br>
+
+                <h3>Query by Date with More Than 2 Transactions</h3>
+                <input type="date" id="queryDate">
+                <button type="button" onclick="showTransactionsByDate()">Show Transactions</button>
+                <div id="dateQueryOutput"></div><br><br><br>
+
+                <h3>Query by Zipcode and Month with More Than 2 Transactions</h3>
+                Zipcode: <input type="text" id="queryZipcode" placeholder="Enter Zipcode"><br>
+                Month: <input type="month" id="queryMonth">
+                <button type="button" onclick="showTransactionsByZipcodeAndMonth()">Show Transactions</button>
+                <div id="zipcodeMonthQueryOutput"></div><br><br><br>
+
+                <h3>Customers Older Than 20 Years with More Than 3 Transactions</h3>
+                <button type="button" onclick="fetchOlderCustomers()">Show Customers</button>
+                <div id="olderCustomersOutput"></div>
+                
             </div>
+
+            <div id="normalUser" style="display: none;">
+                <h2>Welcome, <span id="userNameDisplay"></span></h2>
+                <p>Your account details here...</p><br>
+
+                <h3>Transactions Table</h3>
+                <button type="button" onclick="fetchAllTransactions()">Show All Transactions</button>
+                <button type="button" onclick="hideAllTransactions()">Hide All Transactions</button>
+                <div id="allTransactionsOutput"></div>
+            
+                <div id="transactionControls">
+                    <button onclick="fetchTransactions('currentMonth')">Current Month</button>
+                    <button onclick="fetchTransactions('last3Months')">Last 3 Months</button>
+                    <input type="number" id="inputYear" placeholder="Enter Year" min="2000" max="2099">
+                    <button onclick="fetchTransactions('year', document.getElementById('inputYear').value)">Fetch Year</button>
+                </div>
+            
+                <div id="transactionsOutput"></div>
+            </div>
+            
         </div>
     </div>
-
+    <script src="../inventory copy.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -93,37 +140,26 @@
                     sessionStorage.setItem('sessionActive', true);
                     sessionStorage.setItem('CustomerID', data.customerID);
                     sessionStorage.setItem('UserName', data.userName);
+
                     document.getElementById('loginContainer').style.display = 'none';
                     
                     if (data.customerID == "1") {
                         document.getElementById('adminUser').style.display = 'block';
-                        fetch('../get_inventory.php')
-                            .then(response => response.text())
-                            .then(inventoryData => {
-                            document.querySelector('.main-column').innerHTML = '<h2>Welcome, ' + data.userName + '</h2><p>Your account details here...</p><h3>Inventory Table</h3>' + inventoryData
-                            + `<form id="dateForm">
-                                    <label for="date">Enter Date:</label>
-                                    <input type="date" id="date" name="date" required>
-                                    <button type="button" onclick="fetchData()">Get Data</button>
-                                </form>
-                            <div id="transactionsOutput"></div>`})
+                        document.getElementById('normalUser').style.display = 'block';
+                        document.getElementById('userNameDisplay').textContent = sessionStorage.getItem('UserName');
                     } else {
                         document.getElementById('normalUser').style.display = 'block';
-                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.userName;
-                        fetch('../get_last_transaction.php?CustomerID=' + data.customerID)
-                            .then(response => response.text())
-                            .then(lastTransactionData => {
-                                // Display the last transaction details
-                                document.getElementById('normalUser').innerHTML += '<h3>Last Transaction</h3>' + lastTransactionData;
-                            })
-                            .catch(error => console.error('Error fetching last transaction data:', error));
+                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.customerID;
                     }
+
                 } else {
                     alert("Login failed: " + data.status);
                 }
             })
             .catch(error => console.error('Error:', error));
         });
+
+        
 
         document.getElementById('fileUpload').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -141,23 +177,306 @@
             .catch(error => console.error('Error:', error));
         });
 
-        function fetchTransactions(period) {
-        // Get the customer ID from sessionStorage
-            const customerID = sessionStorage.getItem('CustomerID');
+        function fetchAllTransactions() {
+            var customerID = sessionStorage.getItem('CustomerID');
 
-            // Fetch transactions based on the selected time period
-            fetch(`../get_transactions_by_period.php?CustomerID=${customerID}&period=${period}`)
-                .then(response => response.text())
-                .then(transactionsData => {
-                    document.getElementById('transactionsOutput').innerHTML = transactionsData;
-                })
-                .catch(error => console.error('Error fetching transactions:', error));
+            fetch('../get_all_transactions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ customerID: customerID })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayAllTransactions(data.transactions);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
+
+
+        function displayAllTransactions(transactions) {
+            var outputDiv = document.getElementById('allTransactionsOutput');
+            outputDiv.innerHTML = '';
+
+            transactions.forEach(transaction => {
+                var transactionDiv = document.createElement('div');
+                transactionDiv.innerHTML = `<h4>Transaction ID: ${transaction.TransactionID} - Total Price: $${transaction.TotalPrice}</h4>`;
+
+                if (transaction.TransactionStatus === 'In Cart') {
+                    var cancelButton = document.createElement('button');
+                    cancelButton.textContent = 'Cancel Transaction';
+                    cancelButton.id = 'cancelButton' + transaction.TransactionID;
+                    cancelButton.onclick = function() { cancelOrder(); setTimeout(fetchAllTransactions, 100); fetchAllTransactions();};
+                    transactionDiv.appendChild(cancelButton);
+                }
+
+                var cartTable = document.createElement('table');
+                cartTable.innerHTML = '<tr><th>Item Number</th><th>Quantity</th><th>Cart Status</th></tr>';
+                transaction.Carts.forEach(cart => {
+                    cartTable.innerHTML += `<tr><td>${cart.ItemNumber}</td><td>${cart.Quantity}</td><td>${cart.CartStatus}</td></tr>`;
+                });
+
+                transactionDiv.appendChild(cartTable);
+                outputDiv.appendChild(transactionDiv);
+            });
+        }
+
+        function hideAllTransactions() {
+            document.getElementById('allTransactionsOutput').innerHTML = '';
+        }
+
+
+
+        function updateItemDetails() {
+            var itemNumber = document.getElementById('itemNumber').value;
+            var unitPrice = document.getElementById('unitPrice').value;
+            var quantity = document.getElementById('quantity').value;
+
+            fetch('../update_item.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ itemNumber: itemNumber, unitPrice: unitPrice, quantity: quantity })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Item updated successfully');
+                } else {
+                    alert('Error:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function fetchOlderCustomers() {
+            fetch('../get_older_customers.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayOlderCustomers(data.customers);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function displayOlderCustomers(customers) {
+            var outputDiv = document.getElementById('olderCustomersOutput');
+            var content = customers.length > 0 ? '<ul>' : '<p>No customers found.</p>';
+
+            customers.forEach(customer => {
+                content += `<li>${customer.FirstName} ${customer.LastName} - ${customer.Email}</li>`;
+            });
+
+            if (customers.length > 0) {
+                content += '</ul>';
+            }
+
+            outputDiv.innerHTML = content;
+        }
+
+
+        function showTransactionsByZipcodeAndMonth() {
+            var queryZipcode = document.getElementById('queryZipcode').value;
+            var queryMonthValue = document.getElementById('queryMonth').value;
+            var monthPart = queryMonthValue.split('-')[1];
+            var queryMonth = parseInt(monthPart, 10);
+
+
+            fetch('../get_transactions_by_zipcode_month.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ queryZipcode: queryZipcode, queryMonth: queryMonth })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayZipcodeMonthQueryResults(data.customers);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function displayZipcodeMonthQueryResults(customers) {
+            var outputDiv = document.getElementById('zipcodeMonthQueryOutput');
+            var content = customers.length > 0 ? '<ul>' : '<p>No customers found with more than 2 transactions in this zipcode and month.</p>';
+
+            customers.forEach(customer => {
+                content += `<li>Customer ID: ${customer.CustomerID}, Transactions: ${customer.TransactionsCount}</li>`;
+            });
+
+            if (customers.length > 0) {
+                content += '</ul>';
+            }
+
+            outputDiv.innerHTML = content;
+        }
+
+
+        function showTransactionsByDate() {
+            var queryDate = document.getElementById('queryDate').value;
+
+            fetch('../get_transactions_by_date.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ queryDate: queryDate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayDateQueryResults(data.customers);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function displayDateQueryResults(customers) {
+            var outputDiv = document.getElementById('dateQueryOutput');
+            var content = customers.length > 0 ? '<ul>' : '<p>No customers found with more than 2 transactions on this date.</p>';
+
+            customers.forEach(customer => {
+                content += `<li>Customer ID: ${customer.CustomerID}, Transactions: ${customer.TransactionsCount}</li>`;
+            });
+
+            if (customers.length > 0) {
+                content += '</ul>';
+            }
+
+            outputDiv.innerHTML = content;
+        }
+
+
+        function showInventory(divId, endpoint) {
+            fetch(endpoint)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayInventory(divId, data.items);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+            document.getElementById(divId).style.display = 'block';
+        }
+
+        function hideInventory(divId) {
+            document.getElementById(divId).style.display = 'none';
+        }
+
+        function displayInventory(divId, items) {
+            var outputDiv = document.getElementById(divId);
+            var table = document.createElement('table');
+            table.innerHTML = '<tr><th>Item Number</th><th>Name</th><th>Category</th><th>Subcategory</th><th>Unit Price</th><th>Quantity</th></tr>';
+
+            items.forEach(item => {
+                var row = document.createElement('tr');
+                row.innerHTML = `<td>${item.ItemNumber}</td><td>${item.Name}</td><td>${item.Category}</td><td>${item.Subcategory}</td><td>${item.UnitPrice}</td><td>${item.QuantityInInventory}</td>`;
+                table.appendChild(row);
+            });
+
+            outputDiv.innerHTML = '';
+            outputDiv.appendChild(table);
+        }
+
+
+
+        function fetchTransactions(timeFrame, year = null) {
+            var customerID = parseInt(sessionStorage.getItem('CustomerID'));
+            var payload = { timeFrame: timeFrame, customerID: customerID };
+
+            if (year !== null) {
+                payload.year = parseInt(year);
+            }
+
+            console.log(payload);
+
+            fetch('../get_transactions_by_period.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.error) {
+                    console.error('Error:', data.error);
+                } else {
+                    displayTransactions(data.transactions);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+        function displayTransactions(transactions) {
+            var outputDiv = document.getElementById('transactionsOutput');
+            outputDiv.innerHTML = ''; 
+
+            if (transactions.length === 0) {
+                outputDiv.innerHTML = '<p>No transactions found for the selected period.</p>';
+                return;
+            }
+
+            var table = document.createElement('table');
+            table.innerHTML = `
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>Total Price</th>
+                    <th>Status</th>
+                </tr>`;
+
+            transactions.forEach(function(transaction) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.TransactionID}</td>
+                    <td>${transaction.TransactionDate}</td>
+                    <td>$${parseFloat(transaction.TotalPrice).toFixed(2)}</td>
+                    <td>${transaction.TransactionStatus}</td>`;
+                table.appendChild(row);
+            });
+
+            outputDiv.appendChild(table);
+        }
+
 
         function fetchData() {
             const date = document.getElementById('date').value;
 
-            // Fetch inventory
             fetch('../get_inventory.php')
             .then(response => response.text())
             .then(inventoryData => {
@@ -165,7 +484,6 @@
             })
             .catch(error => console.error('Error fetching inventory data:', error));
 
-            // Fetch customer transactions
             fetch('../get_transactions.php?date=' + date)
             .then(response => response.text())
             .then(transactionsData => {
@@ -179,13 +497,14 @@
                 document.getElementById('loginContainer').style.display = 'none';
                 if(sessionStorage.getItem('CustomerID') == "1") {
                     document.getElementById('adminUser').style.display = 'block';
+                    document.getElementById('normalUser').style.display = 'block';
+                    document.getElementById('userNameDisplay').textContent = sessionStorage.getItem('UserName');
                 } else {
                     document.getElementById('normalUser').style.display = 'block';
                     document.getElementById('userNameDisplay').textContent = sessionStorage.getItem('UserName');
                 }
             } else {
                 document.getElementById('loginContainer').style.display = 'block';
-                document.getElementById('userInfoContainer').style.display = 'none';
             }
         };
     </script>

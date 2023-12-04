@@ -256,6 +256,14 @@ function updateCartTable(cartItems, transactionId, totalPrice) {
         totalPriceCell.textContent = `$${(price * item.quantity).toFixed(2)}`;
         row.appendChild(totalPriceCell);
 
+        var removeButtonCell = document.createElement("td");
+        var removeButton = document.createElement("button");
+        removeButton.textContent = "Remove";
+        removeButton.style = "background-color: #f2d5cf;color: #5c4f4b;border: none;border-radius: 10px;padding: 10px 20px;font-size: 12px;font-family: 'Arial', sans-serif;"
+        removeButton.onclick = function() { removeCartItem(item.itemId, transactionId); };
+        removeButtonCell.appendChild(removeButton);
+        row.appendChild(removeButtonCell);
+
         tableBody.appendChild(row);
     });
 
@@ -267,9 +275,31 @@ function updateCartTable(cartItems, transactionId, totalPrice) {
 
     var totalValueCell = document.createElement("td");
     totalValueCell.textContent = `$${parseFloat(totalPrice).toFixed(2)}`;
+    totalValueCell.colSpan = 2;
     finalRow.appendChild(totalValueCell);
 
     tableBody.appendChild(finalRow);
+}
+
+function removeCartItem(itemId, transactionId) {
+    fetch('../remove_cart_item.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ itemId: itemId, transactionId: transactionId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+        } else {
+            displayCart();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 
@@ -312,6 +342,7 @@ function clearCartDisplay() {
 
     var totalValueCell = document.createElement("td");
     totalValueCell.textContent = '$0.00';
+    totalValueCell.colSpan = 2;
     finalRow.appendChild(totalValueCell);
 
     tableBody.appendChild(finalRow);
