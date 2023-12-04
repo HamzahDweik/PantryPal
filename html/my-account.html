@@ -38,36 +38,107 @@
     </nav>
 
     <div class="main-content">
-        <div class="side-column">
-            <h3>Account Settings</h3><br>
-            <ol>
-                <li>Profile</li>
-                <li>Orders</li>
-                <li>Payment</li>
-            </ol>
-            <a href="index.html" class="linktest">Logout</a>
-        </div>
-
+        <div class="side-column"></div>
         <div class="main-column">
-            <h3>My Profile</h3>
-            <form class="account-form">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username"><br>
-                
-                <label for="password">Password:</label>
-                <input type="submit" value="Change"><br>
-                
-                <label for="newsletter">Subscribe to Newsletter:</label>
-                <input type="radio" id="newsletter" name="newsletter"><br><br>
-                
-                <input type="submit" value="Save Changes">
-            </form>
+            <div class="login-container" id="loginContainer">
+                <h2>Login to Your Account</h2>
+                <form id="loginForm" method="post">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password: </label>
+                        <input type="password" id="password1" name="password" required>
+                    </div>
+                    <button class="loginButton" type="submit">Login</button>
+                </form>
+                <p>Don't have an account? <a href="register.html">Register here</a>.</p>
+            </div>
+
+            <div id="normalUser" style="display: none;">
+                <h2>Welcome, <span id="userNameDisplay"></span></h2>
+                <p>Your account details here...</p>
+            </div>
+
+            <div id="adminUser" style="display: none;">
+                <form id="fileUpload" method="post">
+                    Select file to upload:
+                    <input type="file" name="fileToUpload" id="fileToUpload">
+                    <input type="submit" value="Upload File" name="submit">
+                </form>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+    
+            var formData = new FormData(this);
+
+            fetch('../login_processor.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.status)
+                if (data.status === "Login successful") {
+                    sessionStorage.setItem('sessionActive', true);
+                    sessionStorage.setItem('CustomerID', data.customerID);
+                    sessionStorage.setItem('UserName', data.userName);
+
+                    document.getElementById('loginContainer').style.display = 'none';
+                    
+                    if (data.customerID == "1") {
+                        document.getElementById('adminUser').style.display = 'block';
+                    } else {
+                        document.getElementById('normalUser').style.display = 'block';
+                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.customerID;
+                    }
+
+                } else {
+                    alert("Login failed: " + data.status);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('fileUpload').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('../file_upload.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        window.onload = function() {
+            if (sessionStorage.getItem('sessionActive')) {
+                document.getElementById('loginContainer').style.display = 'none';
+                if(sessionStorage.getItem('CustomerID') == "1") {
+                    document.getElementById('adminUser').style.display = 'block';
+                } else {
+                    document.getElementById('normalUser').style.display = 'block';
+                    document.getElementById('userNameDisplay').textContent = sessionStorage.getItem('UserName');
+                }
+            } else {
+                document.getElementById('loginContainer').style.display = 'block';
+                document.getElementById('userInfoContainer').style.display = 'none';
+            }
+        };
+    </script>
 
     <footer>
         <p>Hamzah Dweik - HAD190000, CS6314.001</p>
     </footer>
 
-</body>
-</html>
+</body

@@ -46,9 +46,13 @@
         </div>
     
         <div class="main-column">
-            <div class="productDisplay searchable">Milk Chocolate,Gummy Bears,Cherry Lollipop,Peppermint Candy,Sour Worms</div>
-            <script src="../inventory.js"></script>
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
             <script>
+
+                $(document).ready(function() {
+                    populateProducts('candy');
+                });
                 document.getElementById("candySearch").addEventListener("input", function() {
                     let inputCandyName = this.value;
 

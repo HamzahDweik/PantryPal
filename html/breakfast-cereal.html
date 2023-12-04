@@ -51,9 +51,14 @@
         </div>
     
         <div class="main-column">
-            <div class="productDisplay categorical">Reeces Puffs,Cinnamon Toast Crunch,Pancakes,Waffles,Toast Bread,Bagels,Oatmeal,Grits</div>
-            <script src="../inventory.js"></script>
+            <div class="productDisplay"></div>
+            <script src="../inventory copy.js"></script>
             <script>
+
+                $(document).ready(function() {
+                    populateProducts('breakfast');
+                });
+
                 document.getElementById("breakfastCategorySelect").addEventListener("change", function() {
                     let selectedCategory = this.value;
                     let allProducts = document.querySelectorAll(".product");

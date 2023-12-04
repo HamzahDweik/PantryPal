@@ -1,137 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?><xmlProducts>
-    <product name="Potato Chips">
+    <product name="Potato Chips" categories="snacks">
         <price>1.75</price>
         <quantity>7</quantity>
     </product>
-    <product name="Pretzels">
+    <product name="Pretzels" categories="snacks">
         <price>1.50</price>
         <quantity>10</quantity>
     </product>
-    <product name="Popcorn">
+    <product name="Popcorn" categories="snacks">
         <price>1.25</price>
         <quantity>10</quantity>
     </product>
-    <product name="Trail Mix">
+    <product name="Trail Mix" categories="snacks">
         <price>3.00</price>
         <quantity>10</quantity>
     </product>
-    <product name="Granola Bar">
+    <product name="Granola Bar" categories="snacks">
         <price>2.00</price>
         <quantity>10</quantity>
     </product>
-    <product name="Milk Chocolate">
+    <product name="Milk Chocolate" categories="candy">
         <price>1.50</price>
         <quantity>10</quantity>
     </product>
-    <product name="Gummy Bears">
+    <product name="Gummy Bears" categories="candy">
         <price>2.00</price>
         <quantity>10</quantity>
     </product>
-    <product name="Cherry Lollipop">
+    <product name="Cherry Lollipop" categories="candy">
         <price>0.50</price>
         <quantity>9</quantity>
     </product>
-    <product name="Peppermint Candy">
+    <product name="Peppermint Candy" categories="candy">
         <price>1.25</price>
         <quantity>10</quantity>
     </product>
-    <product name="Sour Worms">
+    <product name="Sour Worms" categories="candy">
         <price>2.25</price>
         <quantity>10</quantity>
     </product>
-    <product name="Carrot" categories="product all vegetables">
+    <product name="Carrot" categories="freshProducts vegetables">
         <price>0.75</price>
         <quantity>2</quantity>
     </product>
-    <product name="Broccoli" categories="product all vegetables">
+    <product name="Broccoli" categories="freshProducts vegetables">
         <price>1.25</price>
         <quantity>1</quantity>
     </product>
-    <product name="Apple" categories="product all fruits">
+    <product name="Apple" categories="freshProducts fruits">
         <price>1.00</price>
         <quantity>2</quantity>
     </product>
-    <product name="Banana" categories="product all fruits">
+    <product name="Banana" categories="freshProducts newItems">
         <price>0.50</price>
         <quantity>2</quantity>
     </product>
-    <product name="Cut Melon" categories="product all fruits preCutFruits newItems">
+    <product name="Cut Melon" categories="freshProducts preCutFruits">
         <price>1.50</price>
         <quantity>2</quantity>
     </product>
-    <product name="Cut Pineapple" categories="product all fruits preCutFruits rollbacks">
+    <product name="Cut Pineapple" categories="freshProducts rollbacks">
         <price>2.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Roses" categories="product all flowers">
+    <product name="Roses" categories="freshProducts flowers">
         <price>10.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Lilies" categories="product all flowers">
+    <product name="Lilies" categories="freshProducts flowers">
         <price>8.00</price>
         <quantity>1</quantity>
     </product>
-    <product name="Tomato Salsa" categories="product all salsaDips newItems">
+    <product name="Tomato Salsa" categories="freshProducts salsaDips">
         <price>4.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Guacamole" categories="product all salsaDips rollbacks">
+    <product name="Guacamole" categories="freshProducts rollbacks">
         <price>5.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Winter Squash" categories="product all seasonProduce vegetables">
+    <product name="Winter Squash" categories="freshProducts seasonProduce">
         <price>1.50</price>
         <quantity>3</quantity>
     </product>
-    <product name="Spring Peas" categories="product all seasonProduce vegetables newItems">
+    <product name="Spring Peas" categories="freshProducts newItems">
         <price>2.50</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Waffle" categories="product all frozenBreakfast">
+    <product name="Frozen Waffle" categories="frozen frozenBreakfast">
         <price>3.00</price>
         <quantity>2</quantity>
     </product>
-    <product name="Frozen Pancake" categories="product all frozenBreakfast">
+    <product name="Frozen Pancake" categories="frozen frozenBreakfast">
         <price>3.50</price>
         <quantity>3</quantity>
     </product>
-    <product name="Ice Cream" categories="product all frozenDessert">
+    <product name="Ice Cream" categories="frozen frozenDessert">
         <price>6.00</price>
         <quantity>2</quantity>
     </product>
-    <product name="Frozen Yogurt" categories="product all frozenDessert">
+    <product name="Frozen Yogurt" categories="frozen frozenDessert">
         <price>5.00</price>
         <quantity>2</quantity>
     </product>
-    <product name="Frozen Chicken Meal" categories="product all frozenMeals">
+    <product name="Frozen Chicken Meal" categories="frozen frozenMeals">
         <price>7.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Vegetarian Meal" categories="product all frozenMeals">
+    <product name="Frozen Vegetarian Meal" categories="frozen frozenMeals">
         <price>6.50</price>
         <quantity>3</quantity>
     </product>
-    <product name="Pepperoni Pizza" categories="product all frozenPizza rollbacks">
+    <product name="Pepperoni Pizza" categories="frozen rollbacks">
         <price>8.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Cheese Pizza" categories="product all frozenPizza">
+    <product name="Cheese Pizza" categories="frozen frozenPizza">
         <price>7.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Chicken" categories="product all frozenMeat rollbacks">
+    <product name="Frozen Chicken" categories="frozen frozenMeat">
         <price>10.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Beef" categories="product all frozenMeat">
+    <product name="Frozen Beef" categories="frozen frozenMeat">
         <price>12.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Mozzarella Sticks" categories="product all frozenSnacks">
+    <product name="Frozen Mozzarella Sticks" categories="frozen frozenSnacks">
         <price>5.00</price>
         <quantity>3</quantity>
     </product>
-    <product name="Frozen Onion Rings" categories="product all frozenSnacks">
+    <product name="Frozen Onion Rings" categories="frozen rollbacks">
         <price>4.50</price>
         <quantity>3</quantity>
     </product>

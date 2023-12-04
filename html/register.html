@@ -46,15 +46,15 @@
 
         <div class="main-column">
             <h3>Registration Form</h3>
-            <form id="registrationForm" class="formFormat" method="post" onsubmit="return ValidateForm()">
+            <form id="registrationForm" class="formFormat" method="post">
                 <label for="userName">User Name:</label>
                 <input type="text" id="userName" name="userName" required="True"><br>
 
                 <label for="password">Password:</label>
-                <input type="text" id="password" name="password" required="True"><br>
+                <input type="password" id="password" name="password" required="True"><br>
 
                 <label for="confirmPassword">Confirm Password:</label>
-                <input type="text" id="confirmPassword" name="confirmPassword" required="True"><br>
+                <input type="password" id="confirmPassword" name="confirmPassword" required="True"><br>
 
                 <label for="firstName">First Name:</label>
                 <input type="text" id="firstName" name="firstName" required="True"><br>
@@ -103,8 +103,18 @@
                         return;
                     }
 
-                    this.reset();
-                    alert("Registration successful!");
+                    var formData = new FormData(this);
+
+                    fetch('../register_customer.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        this.reset();
+                    })
+                    .catch(error => console.error('Error:', error));
                 });
             </script>
         </div>
