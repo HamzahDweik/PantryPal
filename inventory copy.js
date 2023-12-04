@@ -1,7 +1,6 @@
 
 if(document.getElementById("cartTable")) {
     displayCart();
-    console.log("called")
     document.getElementById('cancelOrderButton').addEventListener('click', cancelOrder);
     document.getElementById('placeOrderButton').addEventListener('click', placeOrder);
 }
@@ -178,11 +177,10 @@ function calculateTotal(cartItems) {
     var total = 0;
 
     cartItems.forEach(function(item) {
-        // Ensure item.price is a number
         var price = parseFloat(item.price);
         if (isNaN(price)) {
             console.error('Invalid price for item:', item);
-            price = 0; // Set to 0 if invalid
+            price = 0;
         }
         var itemTotalPrice = item.quantity * price;
         total += itemTotalPrice;
@@ -195,7 +193,7 @@ function calculateTotal(cartItems) {
 
 
 function displayCart() {
-    var customerId = sessionStorage.getItem('CustomerID');
+    var customerId = sessionStorage.getItem('CustomerID'); 
 
     fetch('../display_cart.php', {
         method: 'POST',
@@ -209,7 +207,7 @@ function displayCart() {
         if (data.error) {
             console.error('Error:', data.error);
         } else {
-            updateCartTable(data.cartItems);
+            updateCartTable(data.cartItems, data.transactionId, data.totalPrice);
         }
     })
     .catch(error => {
@@ -217,89 +215,131 @@ function displayCart() {
     });
 }
 
-function updateCartTable(cartItems) {
+function updateCartTable(cartItems, transactionId, totalPrice) {
     var tableBody = document.querySelector("#cartTable tbody");
-    tableBody.innerHTML = ''; // Clear existing rows
+    tableBody.innerHTML = '';
 
     cartItems.forEach(item => {
         var price = parseFloat(item.price);
         if (isNaN(price)) {
             console.error('Invalid price for item:', item);
-            price = 0; // Set to 0 if invalid
+            price = 0;
         }
 
         var row = document.createElement("tr");
+
+        var itemIdCell = document.createElement("td");
+        itemIdCell.textContent = item.itemId;
+        row.appendChild(itemIdCell);
+
+        var categoryCell = document.createElement("td");
+        categoryCell.textContent = item.category;
+        row.appendChild(categoryCell);
+
+        var subcategoryCell = document.createElement("td");
+        subcategoryCell.textContent = item.subcategory;
+        row.appendChild(subcategoryCell);
+
         var itemNameCell = document.createElement("td");
         itemNameCell.textContent = item.name;
+        row.appendChild(itemNameCell);
+
         var quantityCell = document.createElement("td");
         quantityCell.textContent = item.quantity;
+        row.appendChild(quantityCell);
+
         var priceCell = document.createElement("td");
         priceCell.textContent = `$${price.toFixed(2)}`;
+        row.appendChild(priceCell);
+
         var totalPriceCell = document.createElement("td");
         totalPriceCell.textContent = `$${(price * item.quantity).toFixed(2)}`;
-        row.appendChild(itemNameCell);
-        row.appendChild(quantityCell);
-        row.appendChild(priceCell);
         row.appendChild(totalPriceCell);
+
         tableBody.appendChild(row);
     });
 
-
     var finalRow = document.createElement("tr");
-    finalRow.appendChild(document.createElement("td"));
-    finalRow.appendChild(document.createElement("td"));
-    finalRow.appendChild(document.createElement("td"));
-    var totalCell = document.createElement("td");
-    totalCell.textContent = `$${calculateTotal(cartItems)}`;
-    finalRow.appendChild(totalCell);
+    var transactionIdCell = document.createElement("td");
+    transactionIdCell.textContent = "Transaction ID: " + transactionId;
+    transactionIdCell.colSpan = 6;
+    finalRow.appendChild(transactionIdCell);
+
+    var totalValueCell = document.createElement("td");
+    totalValueCell.textContent = `$${parseFloat(totalPrice).toFixed(2)}`;
+    finalRow.appendChild(totalValueCell);
+
     tableBody.appendChild(finalRow);
 }
 
+
+
+function cancelOrder() {
+    var customerId = sessionStorage.getItem('CustomerID');
+
+    fetch('../cancel_order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customerId: customerId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Order cancelled successfully');
+            clearCartDisplay();
+        } else {
+            console.error('Error cancelling order:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
 function clearCartDisplay() {
     var tableBody = document.querySelector("#cartTable tbody");
     if (tableBody) {
         tableBody.innerHTML = '';
     }
-    appendTotal(tableBody);
+
+    var finalRow = document.createElement("tr");
+    var transactionIdCell = document.createElement("td");
+    transactionIdCell.textContent = "Transaction ID: 0";
+    transactionIdCell.colSpan = 6;
+    finalRow.appendChild(transactionIdCell);
+
+    var totalValueCell = document.createElement("td");
+    totalValueCell.textContent = '$0.00';
+    finalRow.appendChild(totalValueCell);
+
+    tableBody.appendChild(finalRow);
 }
 
-
-function cancelOrder() {
-    var cartItems = cartXmlDoc.querySelectorAll('product');
-
-    cartItems.forEach((item) => {
-        var productName = item.getAttribute('name');
-        var quantityToReturn = parseInt(item.querySelector('quantity').textContent);
-
-        var productInXml = xmlInventory.querySelector(`product[name='${productName}']`);
-        if (productInXml) {
-            var currentQuantityXml = parseInt(productInXml.querySelector('quantity').textContent);
-            productInXml.querySelector('quantity').textContent = currentQuantityXml + quantityToReturn;
-        } else {
-            var productInJson = jsonInventory.products.find(p => p.name === productName);
-            if (productInJson) {
-                productInJson.quantity += quantityToReturn;
-            }
-        }
-    });
-
-    while (cartXmlDoc.firstChild) {
-        cartXmlDoc.removeChild(cartXmlDoc.firstChild);
-    }
-
-    updateInventoryOnServer(new XMLSerializer().serializeToString(xmlInventory), true);
-    updateInventoryOnServer(JSON.stringify(jsonInventory), false);
-    localStorage.setItem('cart', new XMLSerializer().serializeToString(cartXmlDoc));
-    clearCartDisplay();
-}
 
 function placeOrder() {
-    while (cartXmlDoc.firstChild) {
-        cartXmlDoc.removeChild(cartXmlDoc.firstChild);
-    }
-    localStorage.setItem('cart', new XMLSerializer().serializeToString(cartXmlDoc));
-    clearCartDisplay();
+    var customerId = sessionStorage.getItem('CustomerID');
+
+    fetch('../place_order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customerId: customerId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Order placed successfully');
+            clearCartDisplay();
+        } else {
+            console.error('Error placing order:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 
 

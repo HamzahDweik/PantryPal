@@ -40,10 +40,12 @@ try {
     $row = $inventoryResult->fetch_assoc();
     $itemNumber = $row['ItemNumber'];
 
-    $stmt = $conn->prepare("SELECT Carts.TransactionID, Carts.Quantity FROM Carts INNER JOIN Transactions ON Carts.TransactionID = Transactions.TransactionID WHERE Carts.CustomerID = ? AND Carts.ItemNumber = ? AND Carts.CartStatus = ?");
+    $stmt = $conn->prepare("SELECT TransactionID, Quantity FROM Carts WHERE CustomerID = ? AND ItemNumber = ? AND CartStatus = ?");
     $stmt->bind_param("iis", $customerId, $itemNumber, $cartStatus);
     $stmt->execute();
     $cartResult = $stmt->get_result();
+
+    $transactionId = null;
 
     if ($cartResult->num_rows > 0) {
         $cartRow = $cartResult->fetch_assoc();
@@ -54,20 +56,30 @@ try {
         $stmt = $conn->prepare("UPDATE Carts SET Quantity = ? WHERE CustomerID = ? AND ItemNumber = ? AND TransactionID = ?");
         $stmt->bind_param("iiii", $newQuantity, $customerId, $itemNumber, $transactionId);
         $stmt->execute();
-
-        $stmt = $conn->prepare("UPDATE Transactions SET TotalPrice = TotalPrice + ?, TransactionDate = ? WHERE TransactionID = ?");
-        $stmt->bind_param("dsi", $newTotalPrice, $transactionDate, $transactionId);
-        $stmt->execute();
     } else {
-        $stmt = $conn->prepare("INSERT INTO Transactions (TransactionStatus, TransactionDate, TotalPrice) VALUES (?, ?, ?)");
-        $stmt->bind_param("ssd", $transactionStatus, $transactionDate, $newTotalPrice);
+        $stmt = $conn->prepare("SELECT TransactionID FROM Carts WHERE CustomerID = ? AND CartStatus = 'Pending'");
+        $stmt->bind_param("i", $customerId);
         $stmt->execute();
-        $transactionId = $conn->insert_id;
+        $transactionResult = $stmt->get_result();
+
+        if ($transactionResult->num_rows > 0) {
+            $transactionRow = $transactionResult->fetch_assoc();
+            $transactionId = $transactionRow['TransactionID'];
+        } else {
+            $stmt = $conn->prepare("INSERT INTO Transactions (TransactionStatus, TransactionDate, TotalPrice) VALUES (?, ?, 0)");
+            $stmt->bind_param("ss", $transactionStatus, $transactionDate);
+            $stmt->execute();
+            $transactionId = $conn->insert_id;
+        }
 
         $stmt = $conn->prepare("INSERT INTO Carts (CustomerID, ItemNumber, Quantity, TransactionID, CartStatus) VALUES (?, ?, ?, ?, ?)");
         $stmt->bind_param("iiiis", $customerId, $itemNumber, $quantity, $transactionId, $cartStatus);
         $stmt->execute();
     }
+
+    $stmt = $conn->prepare("UPDATE Transactions SET TotalPrice = TotalPrice + ?, TransactionDate = ? WHERE TransactionID = ?");
+    $stmt->bind_param("dsi", $newTotalPrice, $transactionDate, $transactionId);
+    $stmt->execute();
 
     $stmt = $conn->prepare("UPDATE Inventory SET QuantityInInventory = QuantityInInventory - ? WHERE ItemNumber = ?");
     $stmt->bind_param("ii", $quantity, $itemNumber);
