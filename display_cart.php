@@ -18,6 +18,7 @@ $inputJSON = file_get_contents('php://input');
 $input = json_decode($inputJSON, TRUE);
 $customerId = $input['customerId'];
 
+<<<<<<< HEAD
 $stmt = $conn->prepare("
     SELECT 
         Inventory.ItemNumber,
@@ -34,6 +35,9 @@ $stmt = $conn->prepare("
         Carts.CustomerID = ? AND 
         Carts.CartStatus = 'Pending'
 ");
+=======
+$stmt = $conn->prepare("SELECT Inventory.Name, Carts.Quantity, Inventory.UnitPrice FROM Carts INNER JOIN Inventory ON Carts.ItemNumber = Inventory.ItemNumber WHERE Carts.CustomerID = ? AND Carts.CartStatus = 'Pending'");
+>>>>>>> rahul2
 $stmt->bind_param("i", $customerId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -41,15 +45,19 @@ $result = $stmt->get_result();
 $cartItems = [];
 while ($row = $result->fetch_assoc()) {
     $cartItems[] = [
+<<<<<<< HEAD
         'itemId' => $row['ItemNumber'],
         'category' => $row['Category'],
         'subcategory' => $row['Subcategory'],
+=======
+>>>>>>> rahul2
         'name' => $row['Name'],
         'quantity' => $row['Quantity'],
         'price' => $row['UnitPrice']
     ];
 }
 
+<<<<<<< HEAD
 $stmt = $conn->prepare("SELECT TransactionID, TotalPrice FROM Transactions WHERE TransactionID IN (SELECT TransactionID FROM Carts WHERE CustomerID = ? AND CartStatus = 'Pending')");
 $stmt->bind_param("i", $customerId);
 $stmt->execute();
@@ -64,8 +72,14 @@ if ($transactionRow = $transactionResult->fetch_assoc()) {
 }
 
 echo json_encode(['cartItems' => $cartItems, 'transactionId' => $transactionId, 'totalPrice' => $totalPrice]);
+=======
+echo json_encode(['cartItems' => $cartItems]);
+>>>>>>> rahul2
 
 $stmt->close();
 $conn->close();
 ?>
+<<<<<<< HEAD
 
+=======
+>>>>>>> rahul2

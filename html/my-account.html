@@ -59,6 +59,11 @@
             <div id="normalUser" style="display: none;">
                 <h2>Welcome, <span id="userNameDisplay"></span></h2>
                 <p>Your account details here...</p>
+                <button onclick="fetchTransactions('current month')">Current Month</button>
+                <button onclick="fetchTransactions('last 3 months')">Last 3 Months</button>
+                <button onclick="fetchTransactions('last year')">Last Year</button>
+
+                <div id="transactionsOutput"></div>
             </div>
 
             <div id="adminUser" style="display: none;">
@@ -88,16 +93,31 @@
                     sessionStorage.setItem('sessionActive', true);
                     sessionStorage.setItem('CustomerID', data.customerID);
                     sessionStorage.setItem('UserName', data.userName);
-
                     document.getElementById('loginContainer').style.display = 'none';
                     
                     if (data.customerID == "1") {
                         document.getElementById('adminUser').style.display = 'block';
+                        fetch('../get_inventory.php')
+                            .then(response => response.text())
+                            .then(inventoryData => {
+                            document.querySelector('.main-column').innerHTML = '<h2>Welcome, ' + data.userName + '</h2><p>Your account details here...</p><h3>Inventory Table</h3>' + inventoryData
+                            + `<form id="dateForm">
+                                    <label for="date">Enter Date:</label>
+                                    <input type="date" id="date" name="date" required>
+                                    <button type="button" onclick="fetchData()">Get Data</button>
+                                </form>
+                            <div id="transactionsOutput"></div>`})
                     } else {
                         document.getElementById('normalUser').style.display = 'block';
-                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.customerID;
+                        document.getElementById('userNameDisplay').textContent = "User ID: " + data.userName;
+                        fetch('../get_last_transaction.php?CustomerID=' + data.customerID)
+                            .then(response => response.text())
+                            .then(lastTransactionData => {
+                                // Display the last transaction details
+                                document.getElementById('normalUser').innerHTML += '<h3>Last Transaction</h3>' + lastTransactionData;
+                            })
+                            .catch(error => console.error('Error fetching last transaction data:', error));
                     }
-
                 } else {
                     alert("Login failed: " + data.status);
                 }
@@ -120,6 +140,39 @@
             })
             .catch(error => console.error('Error:', error));
         });
+
+        function fetchTransactions(period) {
+        // Get the customer ID from sessionStorage
+            const customerID = sessionStorage.getItem('CustomerID');
+
+            // Fetch transactions based on the selected time period
+            fetch(`../get_transactions_by_period.php?CustomerID=${customerID}&period=${period}`)
+                .then(response => response.text())
+                .then(transactionsData => {
+                    document.getElementById('transactionsOutput').innerHTML = transactionsData;
+                })
+                .catch(error => console.error('Error fetching transactions:', error));
+        }
+
+        function fetchData() {
+            const date = document.getElementById('date').value;
+
+            // Fetch inventory
+            fetch('../get_inventory.php')
+            .then(response => response.text())
+            .then(inventoryData => {
+                document.getElementById('inventoryOutput').innerHTML = '<h3>Inventory</h3>' + inventoryData;
+            })
+            .catch(error => console.error('Error fetching inventory data:', error));
+
+            // Fetch customer transactions
+            fetch('../get_transactions.php?date=' + date)
+            .then(response => response.text())
+            .then(transactionsData => {
+                document.getElementById('transactionsOutput').innerHTML = '<h3>Customers with More Than Two Transactions on ' + date + '</h3>' + transactionsData;
+            })
+            .catch(error => console.error('Error fetching transactions:', error));
+        }
 
         window.onload = function() {
             if (sessionStorage.getItem('sessionActive')) {
